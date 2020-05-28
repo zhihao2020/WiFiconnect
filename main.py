@@ -1,5 +1,6 @@
 from PyQt5.QtWidgets import QWidget,QApplication,QMessageBox,QFileDialog,QTableWidgetItem,QAbstractItemView,QHeaderView
 from mainUI import Ui_Form
+from PyQt5.QtCore import Qt
 import sys
 import pywifi
 from pywifi import const
@@ -47,16 +48,18 @@ class WiFiconnect(QWidget,Ui_Form):
 
     # 显示wifi列表
     def show_scans_wifi_list(self, scans_res):
-        self.tableWidget.setRowCount(0)
         self.tableWidget.clear()
+        self.tableWidget.setColumnCount(3)
+        self.tableWidget.setHorizontalHeaderLabels(["SSID", "BSSID", "signal"])
+        self.tableWidget.setRowCount(0)
         for index, wifi_info in enumerate(scans_res):
             self.tableWidget.insertRow(index)
-            print(index+1,wifi_info.ssid,wifi_info.bssid,wifi_info.signal)
-            self.tableWidget.setItem(int(index),0,QTableWidgetItem(str(index+1)))
-            self.tableWidget.setItem(int(index),1, QTableWidgetItem(str(wifi_info.ssid)))
-            self.tableWidget.setItem(int(index),2, QTableWidgetItem(wifi_info.bssid))
-            self.tableWidget.setItem(int(index),3,QTableWidgetItem(str(wifi_info.signal)))
+            #print(index+1,wifi_info.ssid,wifi_info.bssid,wifi_info.signal)
+            self.tableWidget.setItem(int(index),0, QTableWidgetItem(str(wifi_info.ssid)))
+            self.tableWidget.setItem(int(index),1, QTableWidgetItem(wifi_info.bssid))
+            self.tableWidget.setItem(int(index),2,QTableWidgetItem(str(wifi_info.signal)))
             # print("| %s | %s | %s | %s \n"%(index,wifi_info.ssid,wifi_info.bssid,wifi_info.signal))
+        self.tableWidget.sortItems(2, Qt.AscendingOrder)  # 设置按照第三列自动降序排序
         self.tableWidget.show()
 
     # 添加密码文件目录
@@ -71,7 +74,7 @@ class WiFiconnect(QWidget,Ui_Form):
     # Treeview绑定事件
     def onDBClick(self,index):
 
-        self.label_4.setText(self.tableWidget.item(index.row(), 1).text())
+        self.label_4.setText(self.tableWidget.item(index.row(), 0).text())
 
     # print("you clicked on",self.wifi_tree.item(self.sels,"values")[1])
 
